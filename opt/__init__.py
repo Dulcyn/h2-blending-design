@@ -130,9 +130,8 @@ class H2DesignOpt:
         self.model = m
 
     def solve(self):
-        opt = SolverFactory(self.solver_name)
-        for key, value in self.solver_options.items():
-            opt.options[key] = value
+        opt = SolverFactory("gurobi")
+  
         results = opt.solve(self.model)
         return results
     

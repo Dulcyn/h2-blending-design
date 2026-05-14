@@ -1,7 +1,7 @@
 {
     "solver": {
         "name": "gurobi",
-        "options": {"1": "highs"}
+        "options": {"1": "gurobi"}
     },
     "general": {
         "comment": "lifetime: years, discount_rate: %",
