@@ -1,0 +1,27 @@
+{
+    "electrolyzer": {
+        "comment": "capex: USD/kW, eff: %, lifetime: hours",
+        "type": "PEM",
+        "capex": 2000,
+        "eff": 83,
+        "lifetime": 80000
+    },
+    "tank": {
+        "comment": "capacity: USD/kg",
+        "capex": 500
+    },
+    "grid": {
+        "comment": "cost: EUR/MW",
+        "cost": 183
+    },
+    "gas": {
+        "comment": "lhv: kwh/Sm³, cost: EUR/m³",
+        "lhv": 8.9608,
+        "cost": 0.66
+    },
+    "water":{
+        "comment": "lhv: kwh/Sm³, cost: EUR/kg",
+        "lhv": 3.0,
+        "cost": 8.0
+    }
+}
