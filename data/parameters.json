@@ -21,7 +21,11 @@
     },
     "water":{
         "comment": "lhv: kwh/Sm³, cost: EUR/kg",
-        "lhv": 3.0,
         "cost": 8.0
+    },
+    "hydrogen":{
+        "comment": "lhv: kwh/Sm³, density: kg/Sm³",
+        "lhv": 3.0,
+        "density": 0.08988
     }
 }
