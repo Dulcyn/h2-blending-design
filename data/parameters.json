@@ -3,13 +3,15 @@
         "comment": "lifetime: years, discount_rate: %",
         "lifetime": 20,
         "discount_rate": 5,
-        "h2_percentage": 15
+        "h2_percentage": 15,
+        "timestep": 1
     },
     "electrolyzer": {
-        "comment": "capex: USD/kW, eff: %, lifetime: hours",
+        "comment": "capex: USD/kW, eff: %, lifetime: hours, qrate: L/kgH2",
         "type": "PEM",
         "capex": 2000,
         "eff": 83,
+        "qrate": 10,
         "lifetime": 80000
     },
     "tank": {

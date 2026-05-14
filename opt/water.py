@@ -1,3 +1,4 @@
 class Water:
     def __init__(self, data):
-        self.cost  = data['cost']
+        self.cost       = data['cost']
+        self.density    = data['density']
