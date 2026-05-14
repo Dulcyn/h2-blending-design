@@ -1,4 +1,10 @@
 {
+    "general": {
+        "comment": "lifetime: years, discount_rate: %",
+        "lifetime": 20,
+        "discount_rate": 5,
+        "h2_percentage": 15
+    },
     "electrolyzer": {
         "comment": "capex: USD/kW, eff: %, lifetime: hours",
         "type": "PEM",
@@ -8,7 +14,8 @@
     },
     "tank": {
         "comment": "capacity: USD/kg",
-        "capex": 500
+        "capex": 500,
+        "V0": 0.5
     },
     "grid": {
         "comment": "cost: EUR/MW",
