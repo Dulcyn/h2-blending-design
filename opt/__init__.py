@@ -80,12 +80,12 @@ class H2DesignOpt:
 
         # Gas energy demand
         def gas_energy_demand_rule(m, t):
-            return self.h2.lhv * m.vh2[t] + self.ng.lhv * m.vng[t] == self.demand[t]
+            return self.h2.lhv * m.vh2[t] + self.ng.lhv * m.vng[t] == self.demand[t] * 1000
         m.gas_energy_demand = pyo.Constraint(m.Ωt, rule=gas_energy_demand_rule)
 
         # h2 blending constraint
         def h2_blending_rule(m, t):
-            return m.vh2[t] == self.general.blending_limit * (m.vh2[t] + m.vng[t])
+            return m.vh2[t] == self.general.αh2 * (m.vh2[t] + m.vng[t])
         m.h2_blending = pyo.Constraint(m.Ωt, rule=h2_blending_rule)
 
         def tank_storage_rule(m, t):
@@ -104,11 +104,11 @@ class H2DesignOpt:
         m.ez_h2_production = pyo.Constraint(m.Ωt, rule=ez_h2_production_rule)
 
         def volume_balance_rule(m, t):
-            return m.vez[t] == m.vh2[t] + m.vth[t]
+            return m.vez[t] == m.vh2[t] + m.vht[t]
         m.volume_balance = pyo.Constraint(m.Ωt, rule=volume_balance_rule)
 
         def water_mass_rule(m, t):
-            return m.mwt[t] == m.vez[t] * self.wt.density * self.ez.qrate
+            return m.mwt[t] == m.vez[t] * self.h2.density * self.ez.qrate
         m.water_mass = pyo.Constraint(m.Ωt, rule=water_mass_rule)
 
         def electrolyzer_capacity_rule(m, t):
