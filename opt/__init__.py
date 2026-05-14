@@ -85,7 +85,7 @@ class H2DesignOpt:
 
         # h2 blending constraint
         def h2_blending_rule(m, t):
-            return m.vh2[t] == self.general.αh2 * (m.vh2[t] + m.vng[t])
+            return m.vh2[t] == (self.general.αh2/100) * (m.vh2[t] + m.vng[t])
         m.h2_blending = pyo.Constraint(m.Ωt, rule=h2_blending_rule)
 
         def tank_storage_rule(m, t):
