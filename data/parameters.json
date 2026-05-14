@@ -1,4 +1,8 @@
 {
+    "solver": {
+        "name": "gurobi",
+        "options": {"1": "highs"}
+    },
     "general": {
         "comment": "lifetime: years, discount_rate: %",
         "lifetime": 20,

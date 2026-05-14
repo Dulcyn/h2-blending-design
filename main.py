@@ -15,6 +15,13 @@ def main():
     
     opt.solve()
 
+    print("Optimal design found:")
+    print(f"Total cost (USD): {opt.model.objective():.2f}")
+    print(f"Electrolyzer capacity (kW): {opt.model.Λez.value:.2f}")
+    print(f"Tank capacity (kg): {opt.model.Λht.value:.2f}")
+    print(f"Total H2 produced (kg): {sum(opt.model.vh2[t].value for t in opt.model.Ωt):.2f}")
+    print(f"Total NG consumed (kg): {sum(opt.model.vng[t].value for t in opt.model.Ωt):.2f}")
+
 
     return
 

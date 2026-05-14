@@ -23,6 +23,14 @@ class H2DesignOpt:
         self.ht = Tank(data['tank'])
         self.ng = Gas(data['gas'])
 
+        solver_data = data.get('solver', {})
+        if isinstance(solver_data, str):
+            self.solver_name = solver_data
+            self.solver_options = {}
+        else:
+            self.solver_name = solver_data.get('name', 'gurobi')
+            self.solver_options = solver_data.get('options', {})
+
         self.demand = demand
 
         return
@@ -122,7 +130,9 @@ class H2DesignOpt:
         self.model = m
 
     def solve(self):
-        opt = SolverFactory('gurobi')
+        opt = SolverFactory(self.solver_name)
+        for key, value in self.solver_options.items():
+            opt.options[key] = value
         results = opt.solve(self.model)
         return results
     
