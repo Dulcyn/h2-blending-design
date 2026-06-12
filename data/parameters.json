@@ -32,13 +32,26 @@
         "lhv": 8.9608,
         "cost": 0.66
     },
-    "water":{
+    "water": {
         "comment": "lhv: kwh/Sm³, cost: EUR/kg",
         "cost": 8.0
     },
-    "hydrogen":{
+    "hydrogen": {
         "comment": "lhv: kwh/Sm³, density: kg/Sm³",
         "lhv": 3.0,
         "density": 0.08988
-    }
+    },
+    "PV": {
+        "capex": 770,                 
+        "opex": 15.4,             
+        "lifespan": 25                
+    },
+    "BESS" : {
+        "capex_power": 700,
+        "capex_energy": 15,
+        "opex": 14,
+        "lifespan": 25,
+        "E0": 0,
+        "η": 0.8
+    }    
 }
