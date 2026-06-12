@@ -57,10 +57,11 @@ class H2DesignOpt:
 
         ################## Operation Variables ##################
         # Power
-        m.pts   = pyo.Var(m.Ωt, within=pyo.Reals)               #MW
-        m.pez   = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)    #Mw
-        m.ppv   = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)    #MW
-        m.pbess  = pyo.Var(m.Ωt, within=pyo.Reals)              #MW    
+        m.pts_export   = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)    #MW exported to the grid
+        m.pts_import   = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)    #MW imported from the grid
+        m.pez          = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)    #Mw
+        m.ppv          = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)    #MW
+        m.pbess        = pyo.Var(m.Ωt, within=pyo.Reals)               #MW
 
 
         # Energy
@@ -68,28 +69,41 @@ class H2DesignOpt:
 
 
         # Volume
-        m.vng       = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)  # Natural gas volume
-        m.vh2       = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)  # Hydrogen for demand volume
-        m.vez       = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)  # Electrolyzer hydrogen output volume
-        m.vht_in    = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)  # Hydrogen tank storage input volume
-        m.vht_out   = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)  # Hydrogen tank storage output volume
+        m.vng       = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)  # Natural gas flow (Sm3/h)
+        m.vh2       = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)  # H2 demand flow (Sm3/h)
+        m.vez       = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)  # Electrolyzer H2 output (Sm3/h)
+        m.vht_in    = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)  # Tank input flow (Sm3/h)
+        m.vht_out   = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)  # Tank output flow (Sm3/h)
 
-        m.vht   = pyo.Var(m.Ωt, within=pyo.Reals)  # Hydrogen for storage volume
+        m.vht   = pyo.Var(m.Ωt, within=pyo.Reals)  # Net H2 flow into storage (Sm3/h)
 
         # mass
         m.mwt   = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)  # Water for electrolysis mass
 
 
         # storage
-        m.sht   = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)  # Hydrogen tank storage volume
+        m.sht   = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)  # Hydrogen stored in the tank (kg)
 
         ################## Objective Function ##################
         def objective_rule(m):
-            capex = self.ez.capex * m.Λez + self.ht.capex * m.Λht + self.pv.capex * m.Λpv + self.bess.capex * m.Λbess
-            yearly_opex = Δt * sum(
-                self.ts.cost * m.pts[t] + self.wt.cost * m.mwt[t] + self.ng.cost * m.vng[t] for t in m.Ωt
+            capex = (
+                1000 * self.ez.capex * m.Λez
+                + self.ht.capex * m.Λht
+                + 1000 * self.pv.capex * m.Λpv
+                + 1000 * self.bess.capex * m.Λbess
             )
-            opex = sum(yearly_opex / (1 + self.general.r) ** y for y in range(0, self.general.lifetime))
+            daily_variable_opex = Δt * sum(
+                self.ts.cost * m.pts_import[t] + self.wt.cost * m.mwt[t] + self.ng.cost * m.vng[t] for t in m.Ωt
+            )
+            yearly_variable_opex = self.general.days_per_year * daily_variable_opex
+            yearly_fixed_opex = 1000 * (
+                self.pv.opex * m.Λpv + self.bess.opex * m.Λbess
+            )
+            yearly_opex = yearly_variable_opex + yearly_fixed_opex
+            opex = sum(
+                yearly_opex / (1 + self.general.r) ** y
+                for y in range(1, self.general.lifetime + 1)
+            )
             return capex + opex
         m.objective = pyo.Objective(rule=objective_rule, sense=pyo.minimize)
 
@@ -97,8 +111,9 @@ class H2DesignOpt:
         ################## Power Constraints ##################
         # Power balance
         def power_balance_rule(m, t):
-            return m.pts[t] + m.ppv[t] == m.pez[t] + m.pbess[t]
+            return m.pts_import[t] + m.ppv[t] == m.pez[t] + m.pbess[t] + m.pts_export[t]
         m.power_balance = pyo.Constraint(m.Ωt, rule=power_balance_rule)
+
 
         def pv_generation_rule(m, t):
             return m.ppv[t] <= m.Λpv * self.pv.eff * self.pvgen[t]
@@ -123,6 +138,9 @@ class H2DesignOpt:
         def bess_energy_capacity_rule(m, t):
             return m.ebess[t] <= m.Λbess
         m.bess_energy_capacity = pyo.Constraint(m.Ωt, rule=bess_energy_capacity_rule)
+
+        last_t = max(m.Ωt)
+        m.bess_terminal = pyo.Constraint(expr=m.ebess[last_t] == m.Λbess * self.bess.E0)
         
         ################## Volume and mass Constraints #########
         # Gas energy demand
@@ -136,10 +154,11 @@ class H2DesignOpt:
         m.h2_blending = pyo.Constraint(m.Ωt, rule=h2_blending_rule)
 
         def tank_storage_rule(m, t):
+            net_stored_mass = Δt * self.h2.density * m.vht[t]
             if t == 0:
-                return m.sht[t] == m.Λht * self.ht.V0
+                return m.sht[t] == m.Λht * self.ht.V0 + net_stored_mass
             else:
-                return m.sht[t] == m.sht[t-1] + Δt * m.vht[t]
+                return m.sht[t] == m.sht[t-1] + net_stored_mass
         m.tank_storage = pyo.Constraint(m.Ωt, rule=tank_storage_rule)
 
         def tank_storage_linearization_rule(m, t):
@@ -147,11 +166,11 @@ class H2DesignOpt:
         m.tank_storage_linearization = pyo.Constraint(m.Ωt, rule=tank_storage_linearization_rule)
 
         def ez_h2_production_rule(m, t):
-            return m.vez[t] == Δt * self.ez.eff * m.pez[t]/self.h2.lhv
+            return m.vez[t] == self.ez.eff * m.pez[t] * 1000 / self.h2.lhv
         m.ez_h2_production = pyo.Constraint(m.Ωt, rule=ez_h2_production_rule)
 
         def volume_balance_rule(m, t):
-            return m.vez[t] == m.vh2[t] + m.vht[t]
+            return m.vez[t] + m.vht_out[t] == m.vh2[t] + m.vht_in[t]
         m.volume_balance = pyo.Constraint(m.Ωt, rule=volume_balance_rule)
 
         def water_mass_rule(m, t):
@@ -166,12 +185,13 @@ class H2DesignOpt:
             return m.sht[t] <= m.Λht
         m.tank_capacity = pyo.Constraint(m.Ωt, rule=tank_capacity_rule)
 
+        m.tank_terminal = pyo.Constraint(expr=m.sht[last_t] == m.Λht * self.ht.V0)
+
         self.model = m
 
     def solve(self):
-        opt = SolverFactory("gurobi")
-  
-        results = opt.solve(self.model)
+        opt = SolverFactory(self.solver_name)
+        results = opt.solve(self.model, options=self.solver_options)
         return results
     
     

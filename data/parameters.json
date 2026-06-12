@@ -1,17 +1,18 @@
 {
     "solver": {
         "name": "gurobi",
-        "options": {"1": "gurobi"}
+        "options": {}
     },
     "general": {
         "comment": "lifetime: years, discount_rate: %",
         "lifetime": 20,
         "discount_rate": 5,
         "h2_percentage": 15,
-        "timestep": 1
+        "timestep": 1,
+        "days_per_year": 365
     },
     "electrolyzer": {
-        "comment": "capex: USD/kW, eff: %, lifetime: hours, qrate: L/kgH2",
+        "comment": "capex: EUR/kW, eff: %, lifetime: hours, qrate: L/kgH2",
         "type": "PEM",
         "capex": 2000,
         "eff": 83,
@@ -19,22 +20,27 @@
         "lifetime": 80000
     },
     "tank": {
-        "comment": "capacity: USD/kg",
+        "comment": "capex: EUR/kg",
         "capex": 500,
         "V0": 0.5
     },
     "grid": {
-        "comment": "cost: EUR/MW",
+        "comment": "cost: EUR/MWh",
         "cost": 183
     },
     "gas": {
-        "comment": "lhv: kwh/Sm³, cost: EUR/m³",
+        "comment": "lhv: kWh/Sm³, cost: EUR/Sm³",
         "lhv": 8.9608,
         "cost": 0.66
     },
     "water": {
-        "comment": "lhv: kwh/Sm³, cost: EUR/kg",
-        "cost": 8.0
+        "comment": "cost: EUR/kg; Prague potable-water supply tariff, excluding VAT and sewerage",
+        "cost": 0.00287617,
+        "source": "https://www.pvk.cz/zakaznici/cena/",
+        "source_year": 2026,
+        "source_tariff_czk_m3": 69.53,
+        "reference_rate_czk_eur": 24.171,
+        "reference_rate_date": "2026-06-12"
     },
     "hydrogen": {
         "comment": "lhv: kwh/Sm³, density: kg/Sm³",
@@ -42,12 +48,14 @@
         "density": 0.08988
     },
     "PV": {
+        "comment": "capex: EUR/kW, opex: EUR/kW-year, lifetime: years, eff: p.u.",
         "capex": 770,                 
         "opex": 15.4,             
         "lifetime": 25,
         "eff": 0.95               
     },
     "BESS" : {
+        "comment": "capex: EUR/kWh, opex: EUR/kWh-year, lifetime: years, E0: p.u.",
         "capex": 700,
         "opex": 14,
         "lifetime": 25,

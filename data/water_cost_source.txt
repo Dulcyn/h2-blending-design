@@ -1,0 +1,29 @@
+Water cost source - Prague, Czech Republic
+
+Model value:
+  0.00287617 EUR/kg
+
+Calculation:
+  Prague potable-water supply tariff, excluding VAT and sewerage:
+    69.53 CZK/m3
+
+  ECB reference exchange rate on 2026-06-12:
+    24.171 CZK/EUR
+
+  69.53 CZK/m3 / 24.171 CZK/EUR = 2.87617 EUR/m3
+  2.87617 EUR/m3 / 1000 kg/m3 = 0.00287617 EUR/kg
+
+Notes:
+  Only the potable-water supply tariff (vodne) is included. The sewerage
+  tariff (stocne) is excluded because water used by electrolysis is consumed
+  in the process and is not assumed to be discharged to the sewer system.
+
+Sources:
+  Prague Water Supply and Sewerage Company (PVK), 2026 tariff:
+  https://www.pvk.cz/zakaznici/cena/
+
+  European Central Bank, euro foreign exchange reference rates:
+  https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml
+
+Accessed:
+  2026-06-12
