@@ -58,7 +58,10 @@ def main():
     demand = pd.read_csv("data/energy_demand_MW.csv")
     demand = demand.p3
 
-    opt = H2DesignOpt(data, demand)
+    pv = pd.read_csv("data/pv_generation.csv")
+    pv = pv.p3
+
+    opt = H2DesignOpt(data, demand, pv)
     opt.build()
     
     opt.solve()
@@ -67,6 +70,8 @@ def main():
     print(f"Total cost (USD): {opt.model.objective():.2f}")
     print(f"Electrolyzer capacity (kW): {opt.model.Λez.value:.2f}")
     print(f"Tank capacity (kg): {opt.model.Λht.value:.2f}")
+    print(f"PV capacity (kW): {opt.model.Λpv.value:.2f}")
+    print(f"BESS capacity (kWh): {opt.model.Λbess.value:.2f}")
     print(f"Total H2 produced (kg): {sum(opt.model.vh2[t].value for t in opt.model.Ωt):.2f}")
     print(f"Total NG consumed (kg): {sum(opt.model.vng[t].value for t in opt.model.Ωt):.2f}")
 

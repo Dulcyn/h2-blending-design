@@ -44,14 +44,15 @@
     "PV": {
         "capex": 770,                 
         "opex": 15.4,             
-        "lifespan": 25                
+        "lifetime": 25,
+        "eff": 0.95               
     },
     "BESS" : {
-        "capex_power": 700,
-        "capex_energy": 15,
+        "capex": 700,
         "opex": 14,
-        "lifespan": 25,
-        "E0": 0,
-        "η": 0.8
+        "lifetime": 25,
+        "E0": 0.5,
+        "eff": 0.8,
+        "crate": 0.5
     }    
 }

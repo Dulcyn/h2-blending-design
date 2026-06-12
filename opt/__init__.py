@@ -4,7 +4,9 @@ import pyomo.environ as pyo
 from .general import General
 
 from .electrolyzer import Electrolyzer
+from .photovoltaic import Photovoltaic
 from .hydrogen import Hydrogen
+from .bess import Battery
 from .water import Water
 from .tank import Tank
 from .grid import Grid
@@ -12,16 +14,19 @@ from .gas import Gas
 
 
 
+
 class H2DesignOpt:
-    def __init__(self, data, demand):
+    def __init__(self, data, demand, pv):
         self.general = General(data['general'])
 
-        self.ez = Electrolyzer(data['electrolyzer'])
-        self.h2 = Hydrogen(data['hydrogen'])
-        self.wt = Water(data['water'])
-        self.ts = Grid(data['grid'])
-        self.ht = Tank(data['tank'])
-        self.ng = Gas(data['gas'])
+        self.ez     = Electrolyzer(data['electrolyzer'])
+        self.h2     = Hydrogen(data['hydrogen'])
+        self.wt     = Water(data['water'])
+        self.ts     = Grid(data['grid'])
+        self.ht     = Tank(data['tank'])
+        self.ng     = Gas(data['gas'])
+        self.pv     = Photovoltaic(data['PV'])
+        self.bess   = Battery(data['BESS'])
 
         solver_data = data.get('solver', {})
         if isinstance(solver_data, str):
@@ -32,7 +37,7 @@ class H2DesignOpt:
             self.solver_options = solver_data.get('options', {})
 
         self.demand = demand
-
+        self.pvgen = pv
         return
     
     def build(self):
@@ -44,13 +49,22 @@ class H2DesignOpt:
         Δt = self.general.timestep        
 
         ################## Decision making variables ##################
-        m.Λez = pyo.Var(within=pyo.NonNegativeReals)
-        m.Λht = pyo.Var(within=pyo.NonNegativeReals)
+        m.Λez = pyo.Var(within=pyo.NonNegativeReals) #tamanho do eletrolisador (MW)
+        m.Λht = pyo.Var(within=pyo.NonNegativeReals) #tamanho do tanque         (kg)
+        m.Λpv = pyo.Var(within=pyo.NonNegativeReals) #tamanho do PV (MW)
+        m.Λbess = pyo.Var(within=pyo.NonNegativeReals) #tamanho da bess (MWh)
+
 
         ################## Operation Variables ##################
+        # Power
+        m.pts   = pyo.Var(m.Ωt, within=pyo.Reals)               #MW
+        m.pez   = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)    #Mw
+        m.ppv   = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)    #MW
+        m.pbess  = pyo.Var(m.Ωt, within=pyo.Reals)              #MW    
+
+
         # Energy
-        m.pts   = pyo.Var(m.Ωt, within=pyo.Reals)
-        m.pez   = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)
+        m.ebess  = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)  # BESS energy storage level
 
 
         # Volume
@@ -71,7 +85,7 @@ class H2DesignOpt:
 
         ################## Objective Function ##################
         def objective_rule(m):
-            capex = self.ez.capex * m.Λez + self.ht.capex * m.Λht
+            capex = self.ez.capex * m.Λez + self.ht.capex * m.Λht + self.pv.capex * m.Λpv + self.bess.capex * m.Λbess
             yearly_opex = Δt * sum(
                 self.ts.cost * m.pts[t] + self.wt.cost * m.mwt[t] + self.ng.cost * m.vng[t] for t in m.Ωt
             )
@@ -80,12 +94,37 @@ class H2DesignOpt:
         m.objective = pyo.Objective(rule=objective_rule, sense=pyo.minimize)
 
 
-        ################## Constraints ##################
+        ################## Power Constraints ##################
         # Power balance
         def power_balance_rule(m, t):
-            return m.pts[t] == m.pez[t]
+            return m.pts[t] + m.ppv[t] == m.pez[t] + m.pbess[t]
         m.power_balance = pyo.Constraint(m.Ωt, rule=power_balance_rule)
 
+        def pv_generation_rule(m, t):
+            return m.ppv[t] <= m.Λpv * self.pv.eff * self.pvgen[t]
+        m.pv_generation = pyo.Constraint(m.Ωt, rule=pv_generation_rule)
+
+        def bess_charging_rule(m, t):
+            return m.pbess[t] <= m.Λbess * self.bess.crate
+        m.bess_charging = pyo.Constraint(m.Ωt, rule=bess_charging_rule)
+
+        def bess_discharging_rule(m, t):
+            return m.pbess[t] >= -m.Λbess * self.bess.crate
+        m.bess_discharging = pyo.Constraint(m.Ωt, rule=bess_discharging_rule)
+
+        ################## Energy Constraints ##################
+        def bess_energy_rule(m, t):
+            if t == 0:
+                return m.ebess[t] == m.Λbess * self.bess.E0 + m.pbess[t] * Δt
+            else:
+                return m.ebess[t] == m.ebess[t-1] + m.pbess[t] * Δt
+        m.bess_energy = pyo.Constraint(m.Ωt, rule=bess_energy_rule)
+
+        def bess_energy_capacity_rule(m, t):
+            return m.ebess[t] <= m.Λbess
+        m.bess_energy_capacity = pyo.Constraint(m.Ωt, rule=bess_energy_capacity_rule)
+        
+        ################## Volume and mass Constraints #########
         # Gas energy demand
         def gas_energy_demand_rule(m, t):
             return self.h2.lhv * m.vh2[t] + self.ng.lhv * m.vng[t] == self.demand[t] * 1000
