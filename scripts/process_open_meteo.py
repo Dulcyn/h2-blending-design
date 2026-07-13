@@ -15,12 +15,18 @@ from pvlib.temperature import faiman
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CONFIG = REPOSITORY_ROOT / "config" / "pv_config.json"
-DEFAULT_INPUT_DIR = REPOSITORY_ROOT / "data" / "raw"
-DEFAULT_ALIGNMENT = REPOSITORY_ROOT / "data" / "ppnet_metar.csv"
+DEFAULT_INPUT_DIR = REPOSITORY_ROOT / "data" / "pv" / "raw"
+DEFAULT_ALIGNMENT = REPOSITORY_ROOT / "data" / "gas" / "ppnet_metar.csv"
 DEFAULT_OUTPUT = (
-    REPOSITORY_ROOT / "data" / "processed" / "pv_capacity_factor_ppnet_2013_2019.csv"
+    REPOSITORY_ROOT
+    / "data"
+    / "pv"
+    / "processed"
+    / "pv_capacity_factor_ppnet_2013_2019.csv"
 )
-DEFAULT_SUMMARY = REPOSITORY_ROOT / "data" / "processed" / "pv_dataset_summary.json"
+DEFAULT_SUMMARY = (
+    REPOSITORY_ROOT / "data" / "pv" / "processed" / "pv_dataset_summary.json"
+)
 RAW_COLUMNS = {
     "temperature_2m": "air_temperature_c",
     "wind_speed_10m": "wind_speed_10m_m_s",

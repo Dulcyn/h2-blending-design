@@ -53,13 +53,13 @@ def plot_results(opt):
 
 
 def main():
-    with open('data/parameters.json', 'r') as f:
+    with open('data/info/parameters.json', 'r') as f:
         data = json.load(f)
 
-    demand = pd.read_csv("data/energy_demand_MW.csv")
+    demand = pd.read_csv("data/gas/energy_demand_MW.csv")
     demand = demand.p3
 
-    pv = pd.read_csv("data/pv_generation.csv")
+    pv = pd.read_csv("data/pv/pv_generation.csv")
     pv = pv.p3
 
     opt = H2DesignOpt(data, demand, pv)

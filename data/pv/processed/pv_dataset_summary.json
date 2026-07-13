@@ -1,7 +1,7 @@
 {
   "source_files": [
     {
-      "file": "data\\raw\\open_meteo_era5_2013.json",
+      "file": "data\\pv\\raw\\open_meteo_era5_2013.json",
       "sha256": "433d2ae3e1db90f14c5f746006276be2a6cac4baccc5a8c11dca8ce709472160",
       "timezone": "GMT",
       "hourly_units": {
@@ -15,7 +15,7 @@
       }
     },
     {
-      "file": "data\\raw\\open_meteo_era5_2014.json",
+      "file": "data\\pv\\raw\\open_meteo_era5_2014.json",
       "sha256": "8e7a9c6e3344996680501a2d1217e17754372d17453e387d07e58c83079d92a0",
       "timezone": "GMT",
       "hourly_units": {
@@ -29,7 +29,7 @@
       }
     },
     {
-      "file": "data\\raw\\open_meteo_era5_2015.json",
+      "file": "data\\pv\\raw\\open_meteo_era5_2015.json",
       "sha256": "9fdda8a803a04aff435e3c0caa345cae719fef7ad79837cf8e835b152418eae1",
       "timezone": "GMT",
       "hourly_units": {
@@ -43,7 +43,7 @@
       }
     },
     {
-      "file": "data\\raw\\open_meteo_era5_2016.json",
+      "file": "data\\pv\\raw\\open_meteo_era5_2016.json",
       "sha256": "a3fc1f9e676e605538a9dc7a60831350aa46b11a89aa83305a07bdc46475a281",
       "timezone": "GMT",
       "hourly_units": {
@@ -57,7 +57,7 @@
       }
     },
     {
-      "file": "data\\raw\\open_meteo_era5_2017.json",
+      "file": "data\\pv\\raw\\open_meteo_era5_2017.json",
       "sha256": "df5d90bd03463d3223010cc9e0e636d057958483b55281aa4af102f343d8a9f6",
       "timezone": "GMT",
       "hourly_units": {
@@ -71,7 +71,7 @@
       }
     },
     {
-      "file": "data\\raw\\open_meteo_era5_2018.json",
+      "file": "data\\pv\\raw\\open_meteo_era5_2018.json",
       "sha256": "934c1e324bf387134aa67c45a2fdd37543bea4846a1b0b77234ddd73d92dd2a8",
       "timezone": "GMT",
       "hourly_units": {
@@ -85,7 +85,7 @@
       }
     },
     {
-      "file": "data\\raw\\open_meteo_era5_2019.json",
+      "file": "data\\pv\\raw\\open_meteo_era5_2019.json",
       "sha256": "85170a058799b8af58ba0808b12d2483675ae05ea1d9a16dc41b96cba76fcb2e",
       "timezone": "GMT",
       "hourly_units": {
@@ -100,7 +100,7 @@
     }
   ],
   "gas_dataset_alignment": {
-    "file": "data\\ppnet_metar.csv",
+    "file": "data\\gas\\ppnet_metar.csv",
     "sha256": "e4c372157c64d7b4e49df7abcd4f57e2dc298c894028d10b0c62531e0fd7f3d2",
     "row_count": 56928,
     "timestamp_min": "2013-01-01T00:00:00+00:00",
@@ -116,7 +116,7 @@
     "start_year": 2013,
     "end_year": 2019,
     "site": "Prague Airport (LKPR)",
-    "alignment_file": "data/ppnet_metar.csv",
+    "alignment_file": "data/gas/ppnet_metar.csv",
     "alignment_timezone": "UTC",
     "source": "Open-Meteo Historical Weather API",
     "model": "ERA5",

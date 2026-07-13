@@ -14,7 +14,7 @@ from urllib3.util.retry import Retry
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CONFIG = REPOSITORY_ROOT / "config" / "pv_config.json"
-DEFAULT_OUTPUT_DIR = REPOSITORY_ROOT / "data" / "raw"
+DEFAULT_OUTPUT_DIR = REPOSITORY_ROOT / "data" / "pv" / "raw"
 OPEN_METEO_ARCHIVE_URL = "https://archive-api.open-meteo.com/v1/archive"
 HOURLY_VARIABLES = (
     "temperature_2m",

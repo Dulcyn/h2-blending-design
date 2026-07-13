@@ -4,7 +4,7 @@
   "start_year": 2013,
   "end_year": 2019,
   "site": "Prague Airport (LKPR)",
-  "alignment_file": "data/ppnet_metar.csv",
+  "alignment_file": "data/gas/ppnet_metar.csv",
   "alignment_timezone": "UTC",
   "source": "Open-Meteo Historical Weather API",
   "model": "ERA5",
