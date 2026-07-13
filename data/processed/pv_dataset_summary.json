@@ -1,0 +1,222 @@
+{
+  "source_files": [
+    {
+      "file": "data\\raw\\open_meteo_era5_2013.json",
+      "sha256": "433d2ae3e1db90f14c5f746006276be2a6cac4baccc5a8c11dca8ce709472160",
+      "timezone": "GMT",
+      "hourly_units": {
+        "time": "iso8601",
+        "temperature_2m": "°C",
+        "wind_speed_10m": "m/s",
+        "shortwave_radiation": "W/m²",
+        "direct_normal_irradiance": "W/m²",
+        "diffuse_radiation": "W/m²",
+        "global_tilted_irradiance": "W/m²"
+      }
+    },
+    {
+      "file": "data\\raw\\open_meteo_era5_2014.json",
+      "sha256": "8e7a9c6e3344996680501a2d1217e17754372d17453e387d07e58c83079d92a0",
+      "timezone": "GMT",
+      "hourly_units": {
+        "time": "iso8601",
+        "temperature_2m": "°C",
+        "wind_speed_10m": "m/s",
+        "shortwave_radiation": "W/m²",
+        "direct_normal_irradiance": "W/m²",
+        "diffuse_radiation": "W/m²",
+        "global_tilted_irradiance": "W/m²"
+      }
+    },
+    {
+      "file": "data\\raw\\open_meteo_era5_2015.json",
+      "sha256": "9fdda8a803a04aff435e3c0caa345cae719fef7ad79837cf8e835b152418eae1",
+      "timezone": "GMT",
+      "hourly_units": {
+        "time": "iso8601",
+        "temperature_2m": "°C",
+        "wind_speed_10m": "m/s",
+        "shortwave_radiation": "W/m²",
+        "direct_normal_irradiance": "W/m²",
+        "diffuse_radiation": "W/m²",
+        "global_tilted_irradiance": "W/m²"
+      }
+    },
+    {
+      "file": "data\\raw\\open_meteo_era5_2016.json",
+      "sha256": "a3fc1f9e676e605538a9dc7a60831350aa46b11a89aa83305a07bdc46475a281",
+      "timezone": "GMT",
+      "hourly_units": {
+        "time": "iso8601",
+        "temperature_2m": "°C",
+        "wind_speed_10m": "m/s",
+        "shortwave_radiation": "W/m²",
+        "direct_normal_irradiance": "W/m²",
+        "diffuse_radiation": "W/m²",
+        "global_tilted_irradiance": "W/m²"
+      }
+    },
+    {
+      "file": "data\\raw\\open_meteo_era5_2017.json",
+      "sha256": "df5d90bd03463d3223010cc9e0e636d057958483b55281aa4af102f343d8a9f6",
+      "timezone": "GMT",
+      "hourly_units": {
+        "time": "iso8601",
+        "temperature_2m": "°C",
+        "wind_speed_10m": "m/s",
+        "shortwave_radiation": "W/m²",
+        "direct_normal_irradiance": "W/m²",
+        "diffuse_radiation": "W/m²",
+        "global_tilted_irradiance": "W/m²"
+      }
+    },
+    {
+      "file": "data\\raw\\open_meteo_era5_2018.json",
+      "sha256": "934c1e324bf387134aa67c45a2fdd37543bea4846a1b0b77234ddd73d92dd2a8",
+      "timezone": "GMT",
+      "hourly_units": {
+        "time": "iso8601",
+        "temperature_2m": "°C",
+        "wind_speed_10m": "m/s",
+        "shortwave_radiation": "W/m²",
+        "direct_normal_irradiance": "W/m²",
+        "diffuse_radiation": "W/m²",
+        "global_tilted_irradiance": "W/m²"
+      }
+    },
+    {
+      "file": "data\\raw\\open_meteo_era5_2019.json",
+      "sha256": "85170a058799b8af58ba0808b12d2483675ae05ea1d9a16dc41b96cba76fcb2e",
+      "timezone": "GMT",
+      "hourly_units": {
+        "time": "iso8601",
+        "temperature_2m": "°C",
+        "wind_speed_10m": "m/s",
+        "shortwave_radiation": "W/m²",
+        "direct_normal_irradiance": "W/m²",
+        "diffuse_radiation": "W/m²",
+        "global_tilted_irradiance": "W/m²"
+      }
+    }
+  ],
+  "gas_dataset_alignment": {
+    "file": "data\\ppnet_metar.csv",
+    "sha256": "e4c372157c64d7b4e49df7abcd4f57e2dc298c894028d10b0c62531e0fd7f3d2",
+    "row_count": 56928,
+    "timestamp_min": "2013-01-01T00:00:00+00:00",
+    "timestamp_max": "2019-06-30T23:00:00+00:00",
+    "timezone_assumption": "UTC",
+    "chronological_order": true,
+    "duplicate_timestamp_count": 0,
+    "invalid_timestamp_count": 0
+  },
+  "configuration": {
+    "latitude": 50.100833,
+    "longitude": 14.26,
+    "start_year": 2013,
+    "end_year": 2019,
+    "site": "Prague Airport (LKPR)",
+    "alignment_file": "data/ppnet_metar.csv",
+    "alignment_timezone": "UTC",
+    "source": "Open-Meteo Historical Weather API",
+    "model": "ERA5",
+    "peak_power_kw": 1.0,
+    "technology": "crystSi",
+    "mounting": "free",
+    "slope": 35,
+    "azimuth": 0,
+    "system_loss_percent": 14,
+    "temperature_coefficient_per_c": -0.004
+  },
+  "pv_model": {
+    "library": "pvlib",
+    "dc_model": "PVWatts",
+    "cell_temperature_model": "Faiman",
+    "system_losses_applied_percent": 14,
+    "upper_power_clipping_applied": false
+  },
+  "row_count": 56928,
+  "timestamp_min": "2013-01-01T00:00:00+00:00",
+  "timestamp_max": "2019-06-30T23:00:00+00:00",
+  "validation": {
+    "missing_values_by_column": {
+      "timestamp": 0,
+      "year": 0,
+      "month": 0,
+      "day": 0,
+      "hour": 0,
+      "air_temperature_c": 0,
+      "wind_speed_10m_m_s": 0,
+      "ghi_w_m2": 0,
+      "dni_w_m2": 0,
+      "dhi_w_m2": 0,
+      "irradiance_plane_of_array_w_m2": 0,
+      "cell_temperature_c": 0,
+      "pv_power_kw": 0,
+      "pv_capacity_factor": 0
+    },
+    "invalid_timestamp_count": 0,
+    "duplicate_timestamp_count": 0,
+    "duplicate_timestamps": [],
+    "raw_source_invalid_timestamp_count": 0,
+    "raw_source_duplicate_timestamp_count": 0,
+    "raw_source_duplicate_timestamps": [],
+    "source_chronological_order": true,
+    "alignment_chronological_order": true,
+    "output_chronological_order": true,
+    "missing_hour_count": 0,
+    "missing_hours_sample": [],
+    "unexpected_hour_count": 0,
+    "unexpected_hours_sample": [],
+    "requested_years": [
+      2013,
+      2014,
+      2015,
+      2016,
+      2017,
+      2018,
+      2019
+    ],
+    "present_years": [
+      2013,
+      2014,
+      2015,
+      2016,
+      2017,
+      2018,
+      2019
+    ],
+    "missing_years": [],
+    "observations_by_year": {
+      "2013": 8760,
+      "2014": 8760,
+      "2015": 8760,
+      "2016": 8784,
+      "2017": 8760,
+      "2018": 8760,
+      "2019": 4344
+    },
+    "expected_observations_by_year": {
+      "2013": 8760,
+      "2014": 8760,
+      "2015": 8760,
+      "2016": 8784,
+      "2017": 8760,
+      "2018": 8760,
+      "2019": 4344
+    },
+    "negative_capacity_factor_count": 0,
+    "capacity_factor_above_one_count": 0,
+    "capacity_factor_min": 0.0,
+    "capacity_factor_max": 0.822881141,
+    "annual_generation_kwh_per_kwp": {
+      "2013": 1055.320968,
+      "2014": 1124.453313,
+      "2015": 1161.171282,
+      "2016": 1123.715061,
+      "2017": 1143.777043,
+      "2018": 1195.618266,
+      "2019": 635.649469
+    }
+  }
+}

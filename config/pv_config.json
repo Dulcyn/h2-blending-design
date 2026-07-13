@@ -1,0 +1,18 @@
+{
+  "latitude": 50.100833,
+  "longitude": 14.26,
+  "start_year": 2013,
+  "end_year": 2019,
+  "site": "Prague Airport (LKPR)",
+  "alignment_file": "data/ppnet_metar.csv",
+  "alignment_timezone": "UTC",
+  "source": "Open-Meteo Historical Weather API",
+  "model": "ERA5",
+  "peak_power_kw": 1.0,
+  "technology": "crystSi",
+  "mounting": "free",
+  "slope": 35,
+  "azimuth": 0,
+  "system_loss_percent": 14,
+  "temperature_coefficient_per_c": -0.004
+}
