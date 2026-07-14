@@ -56,13 +56,14 @@ def main():
     with open('data/parameters.json', 'r') as f:
         data = json.load(f)
 
-    demand = pd.read_csv("data/gas/energy_demand_MW.csv")
-    demand = demand.p3
+    scenario    = "data/scenarios/weekly/"
+    demand      = pd.read_csv(f"{scenario}/gas_representative.csv")
+    pv          = pd.read_csv(f"{scenario}/pv_representative.csv")
+    metadata    = pd.read_csv(f"{scenario}/scenario_metadata.csv")
+    prob = {row['scenario']: row['probability'] for _, row in metadata.iterrows()}
+    horizon = len(demand)
 
-    pv = pd.read_csv("data/pv/pv_generation.csv")
-    pv = pv.p3
-
-    opt = H2DesignOpt(data, demand, pv)
+    opt = H2DesignOpt(data, demand, pv, prob, horizon)
     opt.build()
     
     results = opt.solve()

@@ -1,7 +1,7 @@
 from pyomo.opt import SolverFactory
 import pyomo.environ as pyo
 
-from .general import General
+from .general import General, Sets
 
 from .electrolyzer import Electrolyzer
 from .photovoltaic import Photovoltaic
@@ -16,9 +16,8 @@ from .gas import Gas
 
 
 class H2DesignOpt:
-    def __init__(self, data, demand, pv):
+    def __init__(self, data, demand, pv, prob, horizon):
         self.general = General(data['general'])
-
         self.ez     = Electrolyzer(data['electrolyzer'])
         self.h2     = Hydrogen(data['hydrogen'])
         self.wt     = Water(data['water'])
@@ -27,6 +26,8 @@ class H2DesignOpt:
         self.ng     = Gas(data['gas'])
         self.pv     = Photovoltaic(data['PV'])
         self.bess   = Battery(data['BESS'])
+
+        self.sets   = Sets(horizon, prob)
 
         solver_data = data.get('solver', {})
         if isinstance(solver_data, str):
@@ -44,7 +45,10 @@ class H2DesignOpt:
         m = pyo.ConcreteModel()
 
         # Sets
-        m.Ωt = pyo.Set(initialize=[t for t in range(0, 24)])
+        m.Ωt = pyo.Set(initialize=[t for t in self.sets.Ωt])
+        m.Ωs = pyo.Set(initialize=[s for s in self.sets.Ωs])
+        m.prob = pyo.Param(m.Ωs, initialize=self.sets.prob, mutable=True)
+    
         
         Δt = self.general.timestep        
 
@@ -53,36 +57,38 @@ class H2DesignOpt:
         m.Λht = pyo.Var(within=pyo.NonNegativeReals) #tamanho do tanque         (kg)
         m.Λpv = pyo.Var(within=pyo.NonNegativeReals) #tamanho do PV (MW)
         m.Λbess = pyo.Var(within=pyo.NonNegativeReals) #tamanho da bess (MWh)
+        # m.Λts = pyo.Var(within=pyo.NonNegativeReals) #tamanho da grid (MW)
+        # m.Λcompress = pyo.Var(within=pyo.NonNegativeReals) #tamanho do compressor (MW)
 
 
         ################## Operation Variables ##################
         # Power
-        m.pts_export   = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)    #MW exported to the grid
-        m.pts_import   = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)    #MW imported from the grid
-        m.pez          = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)    #Mw
-        m.ppv          = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)    #MW
-        m.pbess        = pyo.Var(m.Ωt, within=pyo.Reals)               #MW
+        m.pts_export   = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)    #MW exported to the grid
+        m.pts_import   = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)    #MW imported from the grid
+        m.pez          = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)    #Mw
+        m.ppv          = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)    #MW
+        m.pbess        = pyo.Var(m.Ωt, m.Ωs, within=pyo.Reals)               #MW
 
 
         # Energy
-        m.ebess  = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)  # BESS energy storage level
+        m.ebess  = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)  # BESS energy storage level
 
 
         # Volume
-        m.vng       = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)  # Natural gas flow (Sm3/h)
-        m.vh2       = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)  # H2 demand flow (Sm3/h)
-        m.vez       = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)  # Electrolyzer H2 output (Sm3/h)
-        m.vht_in    = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)  # Tank input flow (Sm3/h)
-        m.vht_out   = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)  # Tank output flow (Sm3/h)
+        m.vng       = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)  # Natural gas flow (Sm3/h)
+        m.vh2       = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)  # H2 demand flow (Sm3/h)
+        m.vez       = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)  # Electrolyzer H2 output (Sm3/h)
+        m.vht_in    = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)  # Tank input flow (Sm3/h)
+        m.vht_out   = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)  # Tank output flow (Sm3/h)
 
-        m.vht   = pyo.Var(m.Ωt, within=pyo.Reals)  # Net H2 flow into storage (Sm3/h)
+        m.vht   = pyo.Var(m.Ωt, m.Ωs, within=pyo.Reals)  # Net H2 flow into storage (Sm3/h)
 
         # Water
-        m.vwater = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)  # Electrolysis water flow (m3/h)
+        m.vwater = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)  # Electrolysis water flow (m3/h)
 
 
         # storage
-        m.sht   = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)  # Hydrogen stored in the tank (kg)
+        m.sht   = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)  # Hydrogen stored in the tank (kg)
 
         ################## Objective Function ##################
         def objective_rule(m):
@@ -92,10 +98,10 @@ class H2DesignOpt:
                 + 1000 * self.pv.capex * m.Λpv
                 + 1000 * self.bess.capex * m.Λbess
             )
-            daily_variable_opex = Δt * sum(
-                self.ts.cost * m.pts_import[t] + self.wt.cwater * m.vwater[t] + self.ng.cost * m.vng[t] for t in m.Ωt
-            )
-            yearly_variable_opex = self.general.days_per_year * daily_variable_opex
+            variable_opex = Δt * sum(self.sets.prob[s] * (
+                self.ts.cost * m.pts_import[t, s] + self.wt.cwater * m.vwater[t, s] + self.ng.cost * m.vng[t, s] for t in m.Ωt
+            )   for s in m.Ωs)
+            yearly_variable_opex = self.sets.year * variable_opex
             yearly_fixed_opex = 1000 * (
                 self.pv.opex * m.Λpv + self.bess.opex * m.Λbess
             )
@@ -110,9 +116,9 @@ class H2DesignOpt:
 
         ################## Power Constraints ##################
         # Power balance
-        def power_balance_rule(m, t):
-            return m.pts_import[t] + m.ppv[t] == m.pez[t] + m.pbess[t] + m.pts_export[t]
-        m.power_balance = pyo.Constraint(m.Ωt, rule=power_balance_rule)
+        def power_balance_rule(m, t, s):
+            return m.pts_import[t, s] + m.ppv[t, s] == m.pez[t, s] + m.pbess[t, s] + m.pts_export[t, s]
+        m.power_balance = pyo.Constraint(m.Ωt, m.Ωs, rule=power_balance_rule)
 
 
         def pv_generation_rule(m, t):
