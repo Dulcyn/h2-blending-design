@@ -62,5 +62,11 @@
         "E0": 0.5,
         "eff": 0.8,
         "crate": 0.5
-    }    
+    },
+    "COMPRESSOR" : {
+        "comment": "capex: EUR/kWh, opex: EUR/kWh-year, lifetime: years, E0: p.u.",
+        "capex": 800,
+        "lifetime": 20,
+        "eff": 0.8
+    } 
 }
