@@ -301,11 +301,11 @@ respectively.
 
 The generated files are:
 
-- `data/scenarios/gas_representative_days.csv`;
-- `data/scenarios/pv_representative_days.csv`;
-- `data/scenarios/scenario_metadata.csv`;
-- `data/scenarios/representative_scenarios_pca.pdf` (Gulliver font);
-- `data/scenarios/representative_days_profiles.pdf` (Gulliver font).
+- `data/scenarios/daily/gas_representative_days.csv`;
+- `data/scenarios/daily/pv_representative_days.csv`;
+- `data/scenarios/daily/scenario_metadata.csv`;
+- `data/scenarios/daily/representative_scenarios_pca.pdf` (Gulliver font);
+- `data/scenarios/daily/representative_days_profiles.pdf` (Gulliver font).
 
 Run the method from the repository root with:
 

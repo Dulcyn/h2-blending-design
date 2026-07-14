@@ -12,11 +12,11 @@
         "days_per_year": 365
     },
     "electrolyzer": {
-        "comment": "capex: EUR/kW, eff: %, lifetime: hours, qrate: L/kgH2",
+        "comment": "capex: EUR/kW, eff: %, lifetime: hours, qwater: L/kgH2",
         "type": "PEM",
         "capex": 2000,
         "eff": 83,
-        "qrate": 10,
+        "qwater": 10,
         "lifetime": 80000
     },
     "tank": {
@@ -34,8 +34,8 @@
         "cost": 0.66
     },
     "water": {
-        "comment": "cost: EUR/kg; Prague potable-water supply tariff, excluding VAT and sewerage",
-        "cost": 0.00287617,
+        "comment": "cwater: EUR/m3; Prague potable-water supply tariff, excluding VAT and sewerage",
+        "cwater": 2.87617,
         "source": "https://www.pvk.cz/zakaznici/cena/",
         "source_year": 2026,
         "source_tariff_czk_m3": 69.53,

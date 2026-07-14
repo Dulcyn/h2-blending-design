@@ -5,4 +5,4 @@ class Electrolyzer:
         efficiency      = data['eff']
         self.eff        = efficiency / 100 if efficiency > 1 else efficiency
         self.type       = data['type']
-        self.qrate      = data['qrate']
+        self.qwater     = data['qwater']

@@ -1,0 +1,22 @@
+{
+  "selected_year": 2015,
+  "selection_method": "Minimum equal-weight standardized distance to the eligible-year centroid using annual mean gas consumption and annual PV yield.",
+  "quality_threshold": {
+    "maximum_invalid_gas_fraction": 0.01
+  },
+  "gas_imputation": "Median of valid observations at the same hour 7 and 14 days before and after; time interpolation is the fallback.",
+  "source_files": {
+    "gas": "data\\gas\\ppnet_metar.csv",
+    "pv": "data\\pv\\processed\\pv_capacity_factor_ppnet_2013_2019.csv",
+    "parameters": "data\\parameters.json"
+  },
+  "start_timestamp": "2015-01-01T00:00:00Z",
+  "end_timestamp": "2015-12-31T23:00:00Z",
+  "observations": 8760,
+  "invalid_gas_hours_repaired": 30,
+  "gas_upper_fence_sm3_h": 537963.0,
+  "gas_lhv_kwh_sm3": 8.9608,
+  "annual_gas_energy_mwh": 7603121.395598399,
+  "annual_pv_yield_kwh_kwp": 1161.171282284513,
+  "joint_selection_distance": 0.6990145271303094
+}

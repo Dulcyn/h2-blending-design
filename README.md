@@ -24,7 +24,8 @@ data/parameters.json  model and solver configuration
 data/info/  costs, probabilities, and source notes
 data/gas/   gas-demand datasets and PPNet metadata
 data/pv/    PV profiles, raw ERA5 responses, and processed outputs
-data/scenarios/  joint representative gas and PV days
+data/scenarios/daily/   joint representative gas and PV days
+data/scenarios/weekly/  joint representative gas and PV weeks
 ```
 
 ### Run the pipeline
@@ -71,11 +72,34 @@ Input paths and clustering settings are constants at the beginning of the script
 The script also creates a PCA visualization of the clusters. Stars identify the representative historical days; extreme scenarios have a red outline and an `(E)` label. PCA is used only for visualization; clustering still uses all 48 hourly gas and PV attributes. The PDF uses the Gulliver font stored in `data/Gulliver.otf`.
 
 ```text
-data/scenarios/gas_representative_days.csv
-data/scenarios/pv_representative_days.csv
-data/scenarios/scenario_metadata.csv
-data/scenarios/representative_scenarios_pca.pdf
-data/scenarios/representative_days_profiles.pdf
+data/scenarios/daily/gas_representative_days.csv
+data/scenarios/daily/pv_representative_days.csv
+data/scenarios/daily/scenario_metadata.csv
+data/scenarios/daily/representative_scenarios_pca.pdf
+data/scenarios/daily/representative_days_profiles.pdf
+```
+
+### Weekly representative scenarios
+
+The weekly pipeline is separate from the daily pipeline and does not replace
+its files. It groups complete Monday-to-Sunday UTC profiles with 168 hourly gas
+values and 168 hourly PV values per candidate week:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\create_representative_weeks.py
+```
+
+The default configuration creates 11 representative weeks. Weeks containing
+partial or invalid data are excluded as a whole. Extreme weeks include maximum
+gas demand, minimum weekly PV, high-gas/low-PV, low-gas/low-PV, and maximum
+weekly PV conditions. Gas and PV always come from the same historical week.
+
+```text
+data/scenarios/weekly/gas_representative_weeks.csv
+data/scenarios/weekly/pv_representative_weeks.csv
+data/scenarios/weekly/scenario_metadata.csv
+data/scenarios/weekly/representative_weeks_pca.pdf
+data/scenarios/weekly/representative_weeks_profiles.pdf
 ```
 
 ### Sources

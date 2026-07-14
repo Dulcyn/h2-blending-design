@@ -77,8 +77,8 @@ class H2DesignOpt:
 
         m.vht   = pyo.Var(m.Ωt, within=pyo.Reals)  # Net H2 flow into storage (Sm3/h)
 
-        # mass
-        m.mwt   = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)  # Water for electrolysis mass
+        # Water
+        m.vwater = pyo.Var(m.Ωt, within=pyo.NonNegativeReals)  # Electrolysis water flow (m3/h)
 
 
         # storage
@@ -93,7 +93,7 @@ class H2DesignOpt:
                 + 1000 * self.bess.capex * m.Λbess
             )
             daily_variable_opex = Δt * sum(
-                self.ts.cost * m.pts_import[t] + self.wt.cost * m.mwt[t] + self.ng.cost * m.vng[t] for t in m.Ωt
+                self.ts.cost * m.pts_import[t] + self.wt.cwater * m.vwater[t] + self.ng.cost * m.vng[t] for t in m.Ωt
             )
             yearly_variable_opex = self.general.days_per_year * daily_variable_opex
             yearly_fixed_opex = 1000 * (
@@ -173,9 +173,9 @@ class H2DesignOpt:
             return m.vez[t] + m.vht_out[t] == m.vh2[t] + m.vht_in[t]
         m.volume_balance = pyo.Constraint(m.Ωt, rule=volume_balance_rule)
 
-        def water_mass_rule(m, t):
-            return m.mwt[t] == m.vez[t] * self.h2.density * self.ez.qrate
-        m.water_mass = pyo.Constraint(m.Ωt, rule=water_mass_rule)
+        def water_volume_rule(m, t):
+            return m.vwater[t] == m.vez[t] * self.h2.density * self.ez.qwater / 1000
+        m.water_volume = pyo.Constraint(m.Ωt, rule=water_volume_rule)
 
         def electrolyzer_capacity_rule(m, t):
             return m.pez[t] <= m.Λez
