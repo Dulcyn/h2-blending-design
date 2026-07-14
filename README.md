@@ -20,7 +20,8 @@ The pipeline configuration is stored in `config/pv_config.json`:
 ### Data organization
 
 ```text
-data/info/  model parameters, costs, probabilities, and source notes
+data/parameters.json  model and solver configuration
+data/info/  costs, probabilities, and source notes
 data/gas/   gas-demand datasets and PPNet metadata
 data/pv/    PV profiles, raw ERA5 responses, and processed outputs
 data/scenarios/  joint representative gas and PV days

@@ -17,8 +17,7 @@ The method uses:
 - hourly natural-gas consumption from `data/gas/ppnet_metar.csv`;
 - hourly PV capacity factors from
   `data/pv/processed/pv_capacity_factor_ppnet_2013_2019.csv`;
-- the natural-gas lower heating value (LHV) from
-  `data/info/parameters.json`.
+- the natural-gas lower heating value (LHV) from `data/parameters.json`.
 
 Both time series cover the Prague region and are aligned in UTC. The PV series
 is generated for Prague Airport (LKPR), at latitude 50.100833 and longitude

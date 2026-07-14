@@ -22,7 +22,7 @@ GAS_FILE = Path("data/gas/ppnet_metar.csv")
 PV_FILE = Path(
     "data/pv/processed/pv_capacity_factor_ppnet_2013_2019.csv"
 )
-PARAMETERS_FILE = Path("data/info/parameters.json")
+PARAMETERS_FILE = Path("data/parameters.json")
 FONT_FILE = Path("data/Gulliver.otf")
 OUTPUT_DIR = Path("data/scenarios")
 
@@ -433,13 +433,6 @@ def write_pca_plot(
     axis.set_xlabel(f"PC1 ({explained_variance_ratio[0] * 100:.1f}% variance)")
     axis.set_ylabel(f"PC2 ({explained_variance_ratio[1] * 100:.1f}% variance)")
     axis.grid(alpha=0.25)
-    axis.legend(
-        title="Cluster",
-        ncol=2,
-        loc="upper left",
-        bbox_to_anchor=(1.01, 1),
-        frameon=True,
-    )
     axis.text(
         0.01,
         0.01,
