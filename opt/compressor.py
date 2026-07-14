@@ -4,3 +4,4 @@ class Compressor:
         self.lifetime   = data['lifetime']
         self.eff        = data['eff']
         
+        
