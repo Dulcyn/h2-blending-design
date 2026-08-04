@@ -27,7 +27,7 @@ class H2DesignOpt:
         self.pv     = Photovoltaic(data['PV'])
         self.bess   = Battery(data['BESS'])
 
-        self.sets   = Sets(horizon, prob)
+        self.sets   = Sets(horizon, prob) 
 
         self.demand = {
             s: demand[s].tolist()
