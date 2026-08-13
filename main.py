@@ -83,7 +83,10 @@ def main():
     print(f"Tank capacity (kg): {opt.model.Λht.value:.2f}")
     print(f"PV capacity (MW): {opt.model.Λpv.value:.2f}")
     print(f"BESS capacity (MWh): {opt.model.Λbess.value:.2f}")
+    print(f"Compressor capacity (MW): {opt.model.Λcomp.value:.2f}")
+
     print("Operational results by scenario:")
+    
     for s in opt.sets.Ωs:
         h2_mass = (
             sum(opt.model.vez[t, s].value for t in opt.model.Ωt)

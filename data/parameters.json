@@ -64,9 +64,10 @@
         "crate": 0.5
     },
     "COMPRESSOR" : {
-        "comment": "capex: EUR/kWh, opex: EUR/kWh-year, lifetime: years, E0: p.u.",
-        "capex": 800,
+        "comment": "capex: EUR/kW, opex: EUR/kWh-year, lifetime: years, E0: p.u., kcomp: kWh/kg",
+        "capex": 1000,
         "lifetime": 20,
-        "eff": 0.8
+        "eff": 0.8,
+        "kcomp": 1.5
     } 
 }

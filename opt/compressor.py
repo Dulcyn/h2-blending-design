@@ -3,5 +3,6 @@ class Compressor:
         self.capex      = data['capex']
         self.lifetime   = data['lifetime']
         self.eff        = data['eff']
+        self.kcomp      = data['kcomp']
         
         

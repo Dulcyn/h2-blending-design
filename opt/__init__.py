@@ -11,6 +11,7 @@ from .water import Water
 from .tank import Tank
 from .grid import Grid
 from .gas import Gas
+from .compressor import Compressor 
 
 
 
@@ -26,8 +27,9 @@ class H2DesignOpt:
         self.ng     = Gas(data['gas'])
         self.pv     = Photovoltaic(data['PV'])
         self.bess   = Battery(data['BESS'])
+        self.comp   = Compressor(data['COMPRESSOR'])
 
-        self.sets   = Sets(horizon, prob) 
+        self.sets   = Sets(horizon, prob) #cria conjunto dentro da classe do python
 
         self.demand = {
             s: demand[s].tolist()
@@ -52,7 +54,7 @@ class H2DesignOpt:
         m = pyo.ConcreteModel()
 
         # Sets
-        m.Ωt = pyo.Set(initialize=[t for t in self.sets.Ωt])
+        m.Ωt = pyo.Set(initialize=[t for t in self.sets.Ωt]) #criando conjuntos dentro do modelo do pyomo
         m.Ωs = pyo.Set(initialize=[s for s in self.sets.Ωs])
         m.prob = pyo.Param(m.Ωs, initialize=self.sets.prob, mutable=True)
     
@@ -65,9 +67,9 @@ class H2DesignOpt:
         m.Λpv = pyo.Var(within=pyo.NonNegativeReals) #tamanho do PV (MW)
         m.Λbess = pyo.Var(within=pyo.NonNegativeReals) #tamanho da bess (MWh)
         # m.Λts = pyo.Var(within=pyo.NonNegativeReals) #tamanho da grid (MW)
-        # m.Λcompress = pyo.Var(within=pyo.NonNegativeReals) #tamanho do compressor (MW)
+        m.Λcomp = pyo.Var(within=pyo.NonNegativeReals) #tamanho do compressor (MW)
 
-
+        
         ################## Operation Variables ##################
         # Power
         m.pts_export   = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)    #MW exported to the grid
@@ -75,6 +77,7 @@ class H2DesignOpt:
         m.pez          = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)    #Mw
         m.ppv          = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)    #MW
         m.pbess        = pyo.Var(m.Ωt, m.Ωs, within=pyo.Reals)               #MW
+        m.pcomp        = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)    #MW
 
 
         # Energy
@@ -104,6 +107,7 @@ class H2DesignOpt:
                 + self.ht.capex * m.Λht
                 + 1000 * self.pv.capex * m.Λpv
                 + 1000 * self.bess.capex * m.Λbess
+                + 1000 * self.comp.capex * m.Λcomp
             )
             variable_opex = Δt * sum(
                 self.sets.prob[s] * sum(
@@ -130,7 +134,7 @@ class H2DesignOpt:
         ################## Power Constraints ##################
         # Power balance
         def power_balance_rule(m, t, s):
-            return m.pts_import[t, s] + m.ppv[t, s] == m.pez[t, s] + m.pbess[t, s] + m.pts_export[t, s]
+            return m.pts_import[t, s] + m.ppv[t, s] == m.pez[t, s] + m.pbess[t, s] + m.pts_export[t, s] + m.pcomp[t, s]
         m.power_balance = pyo.Constraint(m.Ωt, m.Ωs, rule=power_balance_rule)
 
 
@@ -146,6 +150,15 @@ class H2DesignOpt:
             return m.pbess[t, s] >= -m.Λbess * self.bess.crate
         m.bess_discharging = pyo.Constraint(m.Ωt, m.Ωs, rule=bess_discharging_rule)
 
+        def compressor_power_rule(m, t, s):
+            return m.pcomp[t, s] == (self.comp.kcomp * self.h2.density * m.vht_in[t, s])/1000 
+        m.compressor_power = pyo.Constraint(m.Ωt, m.Ωs, rule=compressor_power_rule)
+
+        def compressor_capacity_rule(m, t, s):
+            return m.pcomp[t, s] <= m.Λcomp
+        m.compressor_capacity = pyo.Constraint(m.Ωt, m.Ωs, rule=compressor_capacity_rule)
+
+        
         ################## Energy Constraints ##################
         def bess_energy_rule(m, t, s):
             if t == 0:
@@ -227,3 +240,4 @@ class H2DesignOpt:
 
 
 
+    
