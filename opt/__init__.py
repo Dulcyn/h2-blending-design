@@ -76,8 +76,13 @@ class H2DesignOpt:
         m.pts_import   = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)    #MW imported from the grid
         m.pez          = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)    #Mw
         m.ppv          = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)    #MW
-        m.pbess        = pyo.Var(m.Ωt, m.Ωs, within=pyo.Reals)               #MW
+    #m.pbess        = pyo.Var(m.Ωt, m.Ωs, within=pyo.Reals)               #MW
         m.pcomp        = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)    #MW
+        m.pch          = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)    #MW
+        m.pds          = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)    #MW
+        m.xch          = pyo.Var(m.Ωt, m.Ωs, within=pyo.Binary)              #Binary variable for charging
+        m.xds          = pyo.Var(m.Ωt, m.Ωs, within=pyo.Binary)              #Binary variable for discharging
+
 
 
         # Energy
@@ -134,20 +139,19 @@ class H2DesignOpt:
         ################## Power Constraints ##################
         # Power balance
         def power_balance_rule(m, t, s):
-            return m.pts_import[t, s] + m.ppv[t, s] == m.pez[t, s] + m.pbess[t, s] + m.pts_export[t, s] + m.pcomp[t, s]
+            return m.pts_import[t, s] + m.ppv[t, s] + m.pds[t, s] == m.pez[t, s] + m.pts_export[t, s] + m.pcomp[t, s] + m.pch[t, s]
         m.power_balance = pyo.Constraint(m.Ωt, m.Ωs, rule=power_balance_rule)
-
 
         def pv_generation_rule(m, t, s):
             return m.ppv[t, s] <= m.Λpv * self.pv.eff * self.pvgen[s][t]
         m.pv_generation = pyo.Constraint(m.Ωt, m.Ωs, rule=pv_generation_rule)
 
         def bess_charging_rule(m, t, s):
-            return m.pbess[t, s] <= m.Λbess * self.bess.crate
+            return m.pch[t, s] <= m.Λbess * self.bess.crate
         m.bess_charging = pyo.Constraint(m.Ωt, m.Ωs, rule=bess_charging_rule)
 
         def bess_discharging_rule(m, t, s):
-            return m.pbess[t, s] >= -m.Λbess * self.bess.crate
+            return m.pds[t, s] <= m.Λbess * self.bess.crate
         m.bess_discharging = pyo.Constraint(m.Ωt, m.Ωs, rule=bess_discharging_rule)
 
         def compressor_power_rule(m, t, s):
@@ -161,10 +165,11 @@ class H2DesignOpt:
         
         ################## Energy Constraints ##################
         def bess_energy_rule(m, t, s):
+            net  = (self.bess.eff_ch * m.pch[t, s] - m.pds[t, s] / self.bess.eff_ds) * Δt
             if t == 0:
-                return m.ebess[t, s] == m.Λbess * self.bess.E0 + m.pbess[t, s] * Δt
+                return m.ebess[t, s] == m.Λbess * self.bess.E0 + net
             else:
-                return m.ebess[t,s] == m.ebess[t-1,s] + m.pbess[t,s] * Δt
+                return m.ebess[t,s] == m.ebess[t-1,s] + net
         m.bess_energy = pyo.Constraint(m.Ωt, m.Ωs, rule=bess_energy_rule)
 
         def bess_energy_capacity_rule(m, t, s):
@@ -177,8 +182,24 @@ class H2DesignOpt:
         last_t = max(m.Ωt)
         def bess_terminal_rule(m, s):
             return m.ebess[last_t, s] == m.Λbess * self.bess.E0
-
         m.bess_terminal = pyo.Constraint(m.Ωs, rule=bess_terminal_rule)
+
+        def bess_soc_min_rule(m, t, s):
+            return m.ebess[t, s] >= m.Λbess * self.bess.socmin
+        m.bess_soc_min = pyo.Constraint(m.Ωt, m.Ωs, rule=bess_soc_min_rule)
+
+        ################### Big M Constraints ##################
+        def bess_bigM_ch_rule(m, t, s):
+            return m.pch[t, s] <= m.xch[t, s] * self.bess.bigM
+        m.bess_bigM_ch = pyo.Constraint(m.Ωt, m.Ωs, rule=bess_bigM_ch_rule)
+
+        def bess_bigM_ds_rule(m, t, s):
+            return m.pds[t, s] <= m.xds[t, s] * self.bess.bigM
+        m.bess_bigM_ds = pyo.Constraint(m.Ωt, m.Ωs, rule=bess_bigM_ds_rule)
+
+        def bess_exclusivity_rule(m, t, s):
+            return m.xch[t, s] + m.xds[t, s] <= 1
+        m.bess_exclusivity = pyo.Constraint(m.Ωt, m.Ωs, rule=bess_exclusivity_rule)
 
 
         ################## Volume and mass Constraints #########
