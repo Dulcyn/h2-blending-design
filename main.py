@@ -2,6 +2,7 @@ from opt import H2DesignOpt
 import pandas as pd
 import json
 import matplotlib.pyplot as plt
+import numpy as np
 from pyomo.opt import TerminationCondition
 
 
@@ -16,10 +17,6 @@ def plot_results(opt):
     time_steps = list(opt.model.Ωt)
     scenarios = list(opt.model.Ωs)
 
-
-    
-    
-   
 
     # Potência do eletrolisador
     for s in scenarios:
@@ -55,8 +52,39 @@ def plot_results(opt):
         plt.tight_layout()
         plt.savefig(f'results/optimization_results_{s}.pdf')
         plt.close("all")
-    
-    
+
+    # Figura com todas as potências em um único gráfico
+    for s in scenarios:
+        fig, ax = plt.subplots(figsize=(12, 6)) 
+        ppv      = [opt.model.ppv[t, s].value for t in time_steps]  # Potência PV (MW)
+        pez     = [opt.model.pez[t, s].value for t in time_steps]  # Potência do eletrolisador (MW) 
+        pch     = [opt.model.pch[t, s].value for t in time_steps]  # Potência de carregamento da bateria (MW)
+        pds     = [opt.model.pds[t, s].value for t in time_steps]  # Potência de descarregamento da bateria (MW)
+        pcomp   = [opt.model.pcomp[t, s].value for t in time_steps]  # Potência do compressor (MW)
+
+        ax.plot(time_steps, ppv, label='PV')
+        ax.plot(time_steps, pez, label='Eletrolisador')
+        ax.plot(time_steps, pch, label='Carregamento da Bateria')
+        ax.plot(time_steps, pds, label='Descarregamento da Bateria')
+        ax.plot(time_steps, pcomp, label='Compressor')
+
+        ax.set_xlabel('Tempo (h)')
+        ax.set_ylabel('Potência (MW)')
+        ax.set_title(f'Potência por Cenário - {s}')
+        ax.grid(True)
+        ax.legend(
+            loc='lower left',
+            bbox_to_anchor=(0.5, -0.5),
+            ncol=1,
+            frameon=False
+        )
+            
+
+        plt.tight_layout()
+        plt.savefig(f'results/optimization_results_all_{s}.pdf')
+        plt.close("all")
+
+       
 
 def main():
     with open('data/parameters.json', 'r') as f:
