@@ -3,5 +3,6 @@ class Tank:
         self.capex      = data['capex']
         self.V0         = data['V0']
         # self.efficiency = data['eff']
+        self.opex       = data['opex']
         
         

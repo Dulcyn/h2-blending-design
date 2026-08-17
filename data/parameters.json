@@ -12,17 +12,19 @@
         "days_per_year": 365
     },
     "electrolyzer": {
-        "comment": "capex: EUR/kW, eff: %, lifetime: hours, qwater: L/kgH2",
+        "comment": "modelo alcalino, capex: EUR/kW, eff: %, lifetime: hours, qwater: L/kgH2",
         "type": "PEM",
         "capex": 2000,
         "eff": 83,
         "qwater": 10,
-        "lifetime": 80000
+        "lifetime": 80000,
+        "opex": 46.2            
     },
     "tank": {
         "comment": "capex: EUR/kg",
         "capex": 500,
-        "V0": 0.5
+        "V0": 0.5,
+        "opex": 10 
     },
     "grid": {
         "comment": "cost: EUR/MWh",
@@ -65,13 +67,15 @@
         "eff_ds": 0.95,
         "eff_ch": 0.95,
         "socmin": 0.2,
-        "bigM": 1000
+        "bigM": 1000,
+        "self_discharge": 3.5e-5
     },
     "COMPRESSOR" : {
         "comment": "capex: EUR/kW, opex: EUR/kWh-year, lifetime: years, E0: p.u., kcomp: kWh/kg",
         "capex": 1000,
         "lifetime": 20,
         "eff": 0.8,
-        "kcomp": 1.5
+        "kcomp": 1.5,
+        "opex": 68
     } 
 }

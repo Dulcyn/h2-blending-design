@@ -116,7 +116,7 @@ class H2DesignOpt:
             )
             variable_opex = Δt * sum(
                 self.sets.prob[s] * sum(
-                    self.ts.cost * m.pts_import[t, s]
+                    self.ts.cost* m.pts_import[t, s]
                     + self.wt.cwater * m.vwater[t, s]
                     + self.ng.cost * m.vng[t, s]
                     for t in m.Ωt
@@ -125,8 +125,9 @@ class H2DesignOpt:
             )
             yearly_variable_opex = self.sets.year * variable_opex
             yearly_fixed_opex = 1000 * (
-                self.pv.opex * m.Λpv + self.bess.opex * m.Λbess
-            )
+                self.pv.opex * m.Λpv + self.bess.opex * m.Λbess + self.ez.opex * m.Λez  + self.comp.opex * m.Λcomp
+            ) + self.ht.opex * m.Λht
+
             yearly_opex = yearly_variable_opex + yearly_fixed_opex
             opex = sum(
                 yearly_opex / (1 + self.general.r) ** y
@@ -167,9 +168,9 @@ class H2DesignOpt:
         def bess_energy_rule(m, t, s):
             net  = (self.bess.eff_ch * m.pch[t, s] - m.pds[t, s] / self.bess.eff_ds) * Δt
             if t == 0:
-                return m.ebess[t, s] == m.Λbess * self.bess.E0 + net
+                return m.ebess[t, s] * (1 + self.bess.self_discharge * Δt) == m.Λbess * self.bess.E0 + net
             else:
-                return m.ebess[t,s] == m.ebess[t-1,s] + net
+                return m.ebess[t,s] * (1 + self.bess.self_discharge * Δt) == m.ebess[t-1,s] + net
         m.bess_energy = pyo.Constraint(m.Ωt, m.Ωs, rule=bess_energy_rule)
 
         def bess_energy_capacity_rule(m, t, s):
