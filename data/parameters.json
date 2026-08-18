@@ -36,7 +36,7 @@
         "comment": "lhv: kWh/Sm³, cost: EUR/Sm³",
         "lhv": 8.9608,
         "cost": 0.66,
-        "GHG": 2000
+        "GHG": 2
     },
     "water": {
         "comment": "cwater: EUR/m3; Prague potable-water supply tariff, excluding VAT and sewerage",

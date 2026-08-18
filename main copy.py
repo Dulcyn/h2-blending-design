@@ -55,7 +55,7 @@ def main():
 
     total_ghg = opt.model.ghg.value  # Convert to kgCO2eq/year
 
-    for ghg_limit in range(99.9, 0, -0.1):  # Example GHG limits in kgCO2eq/year
+    for ghg_limit in np.arange(99.9, 0, -0.1):  # Example GHG limits in kgCO2eq/year
         print(f"Running optimization with GHG limit: {ghg_limit}% of total GHG ({total_ghg * ghg_limit / 100:.2f} kgCO2eq/year)")
         opt.build(ghg=ghg_limit*total_ghg/100)  # Set GHG limit as a percentage of the total GHG
         
