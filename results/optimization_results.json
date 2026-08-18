@@ -1,0 +1,18 @@
+{
+    "100%": {
+        "total_cost": 7380756219.624968,
+        "electrolyzer_capacity": 0.0,
+        "tank_capacity": 0.0,
+        "pv_capacity": 0.0,
+        "bess_capacity": 0.0,
+        "compressor_capacity": 0.0,
+        "ghg_emissions": 34513460.051660486,
+        "h2_total": 0.0,
+        "ng_total": 219138350.99999997,
+        "grid_in_total": 0.0,
+        "grid_out_total": 0.0,
+        "pv_total": 0.0,
+        "bess_charging_total": 0.0,
+        "bess_discharging_total": 0.0
+    }
+}

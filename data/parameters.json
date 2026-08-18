@@ -28,12 +28,15 @@
     },
     "grid": {
         "comment": "cost: EUR/MWh",
-        "cost": 183
+        "cost": 183,
+        "GHG": 401.46,
+        "source": "https://ourworldindata.org/grapher/electricity-mix?tab=table&source=total&metric=carbon_intensity&frequency=annual"
     },
     "gas": {
         "comment": "lhv: kWh/Sm³, cost: EUR/Sm³",
         "lhv": 8.9608,
-        "cost": 0.66
+        "cost": 0.66,
+        "GHG": 2000
     },
     "water": {
         "comment": "cwater: EUR/m3; Prague potable-water supply tariff, excluding VAT and sewerage",

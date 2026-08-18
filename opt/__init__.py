@@ -50,7 +50,7 @@ class H2DesignOpt:
 
         return
     
-    def build(self):
+    def build(self, ghg=None):
         m = pyo.ConcreteModel()
 
         # Sets
@@ -76,12 +76,13 @@ class H2DesignOpt:
         m.pts_import   = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)    #MW imported from the grid
         m.pez          = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)    #Mw
         m.ppv          = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)    #MW
-    #m.pbess        = pyo.Var(m.Ωt, m.Ωs, within=pyo.Reals)               #MW
+    #m.pbess        = pyo.Var(m.Ωt, m.Ωs, within=pyo.Reals)                  #MW
         m.pcomp        = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)    #MW
         m.pch          = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)    #MW
         m.pds          = pyo.Var(m.Ωt, m.Ωs, within=pyo.NonNegativeReals)    #MW
         m.xch          = pyo.Var(m.Ωt, m.Ωs, within=pyo.Binary)              #Binary variable for charging
         m.xds          = pyo.Var(m.Ωt, m.Ωs, within=pyo.Binary)              #Binary variable for discharging
+        m.ghg          = pyo.Var(within=pyo.NonNegativeReals)                #GHG emissions (kgCO2eq/h)
 
 
 
@@ -135,6 +136,24 @@ class H2DesignOpt:
             )
             return capex + opex
         m.objective = pyo.Objective(rule=objective_rule, sense=pyo.minimize)
+
+        ################# Emissions Constraints ##################
+        def ghg_emissions_rule(m):
+            return m.ghg == Δt * sum(
+                self.sets.prob[s] * sum(
+                    self.ts.GHG * m.pts_import[t, s] * 1000
+                    + self.ng.GHG * m.vng[t, s]
+                    for t in m.Ωt
+                )
+                for s in m.Ωs
+            )
+        m.ghg_emissions = pyo.Constraint(rule=ghg_emissions_rule)
+
+        if ghg is not None:
+            def ghg_limit_rule(m):
+                return m.ghg <= ghg
+            m.ghg_limit = pyo.Constraint(rule=ghg_limit_rule)
+        
 
 
         ################## Power Constraints ##################
@@ -211,7 +230,7 @@ class H2DesignOpt:
 
         # h2 blending constraint
         def h2_blending_rule(m, t, s):
-            return m.vh2[t, s] == (self.general.αh2/100) * (m.vh2[t, s] + m.vng[t, s])
+            return m.vh2[t, s] <= (self.general.αh2/100) * (m.vh2[t, s] + m.vng[t, s])
         m.h2_blending = pyo.Constraint(m.Ωt, m.Ωs, rule=h2_blending_rule)
 
         def tank_storage_rule(m, t, s):

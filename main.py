@@ -112,6 +112,7 @@ def main():
     print(f"PV capacity (MW): {opt.model.Λpv.value:.2f}")
     print(f"BESS capacity (MWh): {opt.model.Λbess.value:.2f}")
     print(f"Compressor capacity (MW): {opt.model.Λcomp.value:.2f}")
+    print(f"GHG emissions (kgCO2eq/year): {opt.model.ghg.value/1000:.2f}")
 
     print("Operational results by scenario:")
     
